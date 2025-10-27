@@ -1,6 +1,13 @@
 import { Movie } from '@/types/movie'
+import { useListStore } from '@/store/useListStore'
 
 export default function MovieCard({ movie }: { movie: Movie }) {
+  const { addToMyList } = useListStore()
+
+  const handleAddToList = () => {
+    addToMyList('movie', movie)
+  }
+
   return (
     <div className="group relative bg-gray-800/50 backdrop-blur-sm rounded-xl overflow-hidden border border-gray-700 hover:border-blue-500 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20 hover:-translate-y-2">
       <div className="relative w-full h-64 overflow-hidden">
@@ -36,9 +43,17 @@ export default function MovieCard({ movie }: { movie: Movie }) {
           {movie.description}
         </p>
 
-        <button className="mt-4 w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 px-4 rounded-lg font-semibold hover:from-blue-500 hover:to-purple-500 transition-all duration-300 transform hover:scale-105">
-          Watch Now
-        </button>
+        <div className="flex gap-2 mt-4">
+          <button className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 px-4 rounded-lg font-semibold hover:from-blue-500 hover:to-purple-500 transition-all duration-300">
+            Watch Now
+          </button>
+          <button
+            onClick={handleAddToList}
+            className="px-4 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+          >
+            +
+          </button>
+        </div>
       </div>
     </div>
   )
