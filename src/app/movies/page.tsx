@@ -93,7 +93,6 @@ export default function MoviesPage() {
           <p className="text-gray-300 text-lg">Discover your next favorite movie</p>
         </div>
 
-        {/* Search and Filters */}
         <div className="max-w-4xl mx-auto mb-12 space-y-4">
           <div className="relative">
             <input
@@ -135,7 +134,6 @@ export default function MoviesPage() {
           </div>
         </div>
 
-        {/* Movie Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {filteredMovies.map(movie => (
             <MovieCard key={movie.id} movie={movie} />

@@ -91,7 +91,6 @@ export default function BooksPage() {
           <p className="text-gray-300 text-lg">Explore your next great read</p>
         </div>
 
-        {/* Search and Filters */}
         <div className="max-w-4xl mx-auto mb-12 space-y-4">
           <div className="relative">
             <input
@@ -119,7 +118,6 @@ export default function BooksPage() {
           </select>
         </div>
 
-        {/* Book Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {filteredBooks.map(book => (
             <BookCard key={book.id} book={book} />
