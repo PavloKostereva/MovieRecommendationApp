@@ -1,96 +1,47 @@
 'use client'
 
-import { useState } from 'react'
-import SeriesCard from '@/components/SeriesCard'
-import { Series } from '@/types/series'
-
-const series: Series[] = [
-  {
-    id: 1,
-    title: 'Stranger Things',
-    season: 4,
-    episodes: 34,
-    genre: 'Sci-Fi Horror',
-    rating: 8.7,
-    description: 'When a young boy vanishes, a small town uncovers a mystery involving secret experiments and supernatural forces.',
-    year: 2016,
-    poster: 'https://images.unsplash.com/photo-1536090833402-c822014512a8?w=400',
-    status: 'Completed',
-  },
-  {
-    id: 2,
-    title: 'Breaking Bad',
-    season: 5,
-    episodes: 62,
-    genre: 'Crime Drama',
-    rating: 9.5,
-    description: 'A high school chemistry teacher turned methamphetamine manufacturer partners with a former student.',
-    year: 2008,
-    poster: 'https://images.unsplash.com/photo-1611117775350-ac3950990985?w=400',
-    status: 'Completed',
-  },
-  {
-    id: 3,
-    title: 'Game of Thrones',
-    season: 8,
-    episodes: 73,
-    genre: 'Fantasy Drama',
-    rating: 9.2,
-    description: 'Noble families fight for control of the mythical land of Westeros.',
-    year: 2011,
-    poster: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400',
-    status: 'Completed',
-  },
-  {
-    id: 4,
-    title: 'The Crown',
-    season: 6,
-    episodes: 60,
-    genre: 'Historical Drama',
-    rating: 8.7,
-    description: 'Follows the political rivalries and romance of Queen Elizabeth II\'s reign.',
-    year: 2016,
-    poster: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400',
-    status: 'Completed',
-  },
-  {
-    id: 5,
-    title: 'The Witcher',
-    season: 3,
-    episodes: 24,
-    genre: 'Fantasy Adventure',
-    rating: 8.2,
-    description: 'A monster hunter fights for survival in a world where monsters are a common menace.',
-    year: 2019,
-    poster: 'https://images.unsplash.com/photo-1535189043414-47a3c49a0bed?w=400',
-    status: 'Ongoing',
-  },
-  {
-    id: 6,
-    title: 'Money Heist',
-    season: 5,
-    episodes: 41,
-    genre: 'Crime Thriller',
-    rating: 8.2,
-    description: 'A criminal mastermind who goes by "The Professor" plans the biggest heist in Spanish history.',
-    year: 2017,
-    poster: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400',
-    status: 'Completed',
-  },
-]
+import { useState, useEffect } from 'react'
+import SeriesCardEnhanced from '@/components/SeriesCardEnhanced'
+import { getPopularSeries, searchSeries } from '@/lib/tmdb'
 
 export default function SeriesPage() {
+  const [series, setSeries] = useState<any[]>([])
   const [searchQuery, setSearchQuery] = useState('')
-  const [selectedGenre, setSelectedGenre] = useState<string>('all')
+  const [loading, setLoading] = useState(true)
 
-  const genres = ['all', 'Sci-Fi Horror', 'Crime Drama', 'Fantasy Drama', 'Historical Drama', 'Fantasy Adventure', 'Crime Thriller']
+  useEffect(() => {
+    loadSeries()
+  }, [])
 
-  const filteredSeries = series.filter(show => {
-    const matchesSearch = show.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         show.description.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesGenre = selectedGenre === 'all' || show.genre === selectedGenre
-    return matchesSearch && matchesGenre
-  })
+  const loadSeries = async () => {
+    setLoading(true)
+    try {
+      const data = await getPopularSeries()
+      setSeries(data)
+    } catch (error) {
+      console.error('Error loading series:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!searchQuery.trim()) {
+      loadSeries()
+      return
+    }
+
+    setLoading(true)
+    try {
+      const results = await searchSeries(searchQuery)
+      setSeries(results)
+    } catch (error) {
+      console.error('Error searching series:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="bg-black min-h-screen">
@@ -100,8 +51,9 @@ export default function SeriesPage() {
           <p className="text-gray-400">Explore binge-worthy shows</p>
         </div>
 
-        <div className="mb-8 space-y-4">
-          <div className="flex gap-4">
+        {/* Search Bar */}
+        <div className="mb-8">
+          <form onSubmit={handleSearch} className="flex gap-4">
             <div className="flex-1 relative">
               <input
                 type="text"
@@ -115,33 +67,48 @@ export default function SeriesPage() {
               </svg>
             </div>
 
-            <select
-              value={selectedGenre}
-              onChange={(e) => setSelectedGenre(e.target.value)}
-              className="px-4 py-2.5 bg-[#131313] border border-gray-800 text-white focus:outline-none focus:border-[#8B5CF6] transition-colors"
+            <button
+              type="submit"
+              className="px-6 py-2.5 bg-[#8B5CF6] text-white font-semibold hover:bg-purple-500 transition-colors"
             >
-              {genres.map(genre => (
-                <option key={genre} value={genre}>
-                  {genre === 'all' ? 'All Genres' : genre}
-                </option>
-              ))}
-            </select>
+              Search
+            </button>
+
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('')
+                  loadSeries()
+                }}
+                className="px-4 py-2.5 bg-[#1a1a1a] border border-gray-700 text-white hover:border-gray-600 transition-colors"
+              >
+                Clear
+              </button>
+            )}
+          </form>
+        </div>
+
+        {/* Results */}
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="text-center">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#8B5CF6]"></div>
+              <p className="text-gray-400 mt-4">Loading series...</p>
+            </div>
           </div>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          {filteredSeries.map(show => (
-            <SeriesCard key={show.id} series={show} />
-          ))}
-        </div>
-
-        {filteredSeries.length === 0 && (
+        ) : series.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            {series.map(show => (
+              <SeriesCardEnhanced key={show.id} series={show} />
+            ))}
+          </div>
+        ) : (
           <div className="text-center py-12">
-            <p className="text-gray-400 text-lg">No series found. Try adjusting your filters.</p>
+            <p className="text-gray-400 text-lg">No series found. Try a different search.</p>
           </div>
         )}
       </div>
     </div>
   )
 }
-
