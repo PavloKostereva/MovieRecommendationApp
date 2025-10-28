@@ -3,13 +3,13 @@ import { persist } from 'zustand/middleware'
 
 interface ListItem {
   id: number
-  type: 'movie' | 'book'
+  type: 'movie' | 'series'
   data: any
 }
 
 interface ListState {
   myList: ListItem[]
-  addToMyList: (type: 'movie' | 'book', item: any) => void
+  addToMyList: (type: 'movie' | 'series', item: any) => void
   removeFromMyList: (id: number) => void
   isInMyList: (id: number) => boolean
 }
@@ -18,7 +18,7 @@ export const useListStore = create<ListState>()(
   persist(
     (set, get) => ({
       myList: [],
-      addToMyList: (type: 'movie' | 'book', item: any) => {
+      addToMyList: (type: 'movie' | 'series', item: any) => {
         const currentList = get().myList
         const exists = currentList.some((listItem) => listItem.id === item.id)
         

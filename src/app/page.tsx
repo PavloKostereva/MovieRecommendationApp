@@ -3,9 +3,9 @@
 import { useState } from 'react'
 import { useAuthStore } from '@/store/useAuthStore'
 import MovieCard from '@/components/MovieCard'
-import BookCard from '@/components/BookCard'
+import SeriesCard from '@/components/SeriesCard'
 import { Movie } from '@/types/movie'
-import { Book } from '@/types/book'
+import { Series } from '@/types/series'
 
 const sampleMovies: Movie[] = [
   {
@@ -15,7 +15,7 @@ const sampleMovies: Movie[] = [
     genre: 'Action',
     rating: 9.0,
     description: 'Batman faces the Joker in a battle for Gotham\'s soul.',
-    poster: '/api/placeholder/300/450',
+    poster: 'https://images.unsplash.com/photo-1535189043414-47a3c49a0bed?w=400',
     duration: '152 min',
   },
   {
@@ -25,7 +25,7 @@ const sampleMovies: Movie[] = [
     genre: 'Sci-Fi',
     rating: 8.8,
     description: 'A thief enters people\'s dreams to steal their secrets.',
-    poster: '/api/placeholder/300/450',
+    poster: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400',
     duration: '148 min',
   },
   {
@@ -35,96 +35,103 @@ const sampleMovies: Movie[] = [
     genre: 'Sci-Fi',
     rating: 8.6,
     description: 'A team of explorers travel through a wormhole in space.',
-    poster: '/api/placeholder/300/450',
+    poster: 'https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=400',
     duration: '169 min',
   },
 ]
 
-const sampleBooks: Book[] = [
+const sampleSeries: Series[] = [
   {
     id: 1,
-    title: '1984',
-    author: 'George Orwell',
-    genre: 'Dystopian Fiction',
-    rating: 9.3,
-    description: 'A dystopian novel about totalitarian surveillance.',
-    year: 1949,
-    pages: 328,
+    title: 'Stranger Things',
+    season: 4,
+    episodes: 34,
+    genre: 'Sci-Fi Horror',
+    rating: 8.7,
+    description: 'When a young boy vanishes, a small town uncovers a mystery involving secret experiments.',
+    year: 2016,
+    poster: 'https://images.unsplash.com/photo-1536090833402-c822014512a8?w=400',
+    status: 'Completed',
   },
   {
     id: 2,
-    title: 'The Great Gatsby',
-    author: 'F. Scott Fitzgerald',
-    genre: 'Classic Fiction',
-    rating: 8.7,
-    description: 'A tale of decadence and excess in Jazz Age America.',
-    year: 1925,
-    pages: 180,
+    title: 'Breaking Bad',
+    season: 5,
+    episodes: 62,
+    genre: 'Crime Drama',
+    rating: 9.5,
+    description: 'A high school chemistry teacher turned methamphetamine manufacturer.',
+    year: 2008,
+    poster: 'https://images.unsplash.com/photo-1611117775350-ac3950990985?w=400',
+    status: 'Completed',
   },
   {
     id: 3,
-    title: 'To Kill a Mockingbird',
-    author: 'Harper Lee',
-    genre: 'Classic Fiction',
-    rating: 9.1,
-    description: 'A story of racial inequality and moral growth in the South.',
-    year: 1960,
-    pages: 281,
+    title: 'The Witcher',
+    season: 3,
+    episodes: 24,
+    genre: 'Fantasy Adventure',
+    rating: 8.2,
+    description: 'A monster hunter fights for survival in a world where monsters are common.',
+    year: 2019,
+    poster: 'https://images.unsplash.com/photo-1535189043414-47a3c49a0bed?w=400',
+    status: 'Ongoing',
   },
 ]
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<'movies' | 'books'>('movies')
+  const [activeTab, setActiveTab] = useState<'movies' | 'series'>('movies')
   const { user } = useAuthStore()
 
   return (
-    <div className="bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
-      <div className="container mx-auto px-4 py-16">
+    <div className="bg-black min-h-screen">
+      <div className="container mx-auto px-4 py-12">
         {/* Welcome Section */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-600 text-transparent bg-clip-text">
-            Welcome to Recommendation Hub
+          <h1 className="text-5xl font-bold mb-4 text-white">
+            Discover Your Next
+            <span className="text-[#4CAF50] block mt-2">Favorite Entertainment</span>
           </h1>
-          <p className="text-gray-300 text-lg">
-            {user ? `Welcome back, ${user.name}!` : 'Discover your next favorite movie or book'}
+          <p className="text-gray-400 text-lg">
+            {user ? `Welcome back, ${user.name}!` : 'Explore the best movies and TV series'}
           </p>
         </div>
 
         {/* Tabs */}
-        <div className="flex justify-center mb-8 gap-4">
+        <div className="flex justify-center mb-12 gap-4">
           <button
             onClick={() => setActiveTab('movies')}
-            className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+            className={`px-6 py-3 font-semibold transition-all ${
               activeTab === 'movies'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                ? 'text-[#4CAF50] border-b-2 border-[#4CAF50]'
+                : 'text-gray-400 hover:text-white border-b-2 border-transparent'
             }`}
           >
             🎬 Movies
           </button>
           <button
-            onClick={() => setActiveTab('books')}
-            className={`px-6 py-3 rounded-lg font-semibold transition-all ${
-              activeTab === 'books'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+            onClick={() => setActiveTab('series')}
+            className={`px-6 py-3 font-semibold transition-all ${
+              activeTab === 'series'
+                ? 'text-[#8B5CF6] border-b-2 border-[#8B5CF6]'
+                : 'text-gray-400 hover:text-white border-b-2 border-transparent'
             }`}
           >
-            📚 Books
+            📺 TV Series
           </button>
         </div>
 
         {/* Content Grid */}
         {activeTab === 'movies' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {sampleMovies.map(movie => (
               <MovieCard key={movie.id} movie={movie} />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {sampleBooks.map(book => (
-              <BookCard key={book.id} book={book} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {sampleSeries.map(series => (
+              <SeriesCard key={series.id} series={series} />
             ))}
           </div>
         )}
